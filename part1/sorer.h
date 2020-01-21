@@ -6,6 +6,8 @@
 #include <cstring>
 #include <cstdlib>
 
+
+// TODO Alex
 // reads a file from the file name and returns a pointer to a c-string
 char* readFile(const char* filename, size_t from, size_t to) {
 	assert(filename != nullptr);
@@ -110,6 +112,7 @@ char* readFile(const char* filename, size_t from, size_t to) {
 }
 
 
+// TODO Megha
 size_t getNumCols(char* str) {
 
 	size_t numCols = 0;
@@ -189,12 +192,13 @@ size_t getNumCols(char* str) {
 	return numCols;
 }
 
+// TODO Alex
 // populates the given array using values from string str
 void populateArray(char** array, char* str, size_t numCols) {
 
 }
 
-
+// TODO Alex
 // filters the array to have the same datatype per column
 void filterArray(char** array, size_t numCols) {
 	/*
@@ -204,68 +208,46 @@ void filterArray(char** array, size_t numCols) {
 	*/
 }
 
-
+// TODO Megha
 // returns true if str is boolean and false otherwise
 bool isBool(const char* str) {
 	return true;	
 }
 
+// TODO Megha
 bool isString(const char* str) {
 	
 	return true;	
 }
 
+// TODO Megha
 bool isFloat(const char* str) {
 	
 	return true;	
 }
 
 
+// TODO Megha
 bool isInteger(const char* str) {
 	
 	return true;	
 }
 
+// TODO Alex
 // prints the type of the given column
 void printColType(size_t col) {
 	
 }
 
+// TODO Alex
 // prints the value of the entry at the given col and row index
 void printColIndex(size_t colIndex, size_t rowIndex) {
 	
 }
 
+// TODO Alex
 // prints if the given entry is missing a value
 void isMissingIndex(size_t colIndex, size_t rowIndex) {
 	
 }
 
-
-
-// returns columns
-char** getCols(const char* str);
-
-// parses the column to a specific data type
-// TODO add the type of the column at the head of the column
-char* parseColumn(char* col);
-/*
-int main(int argc, char** argv) {
-	
-	// 0) Check arguments
-	
-	// 1) read the file and calculate the number of cols and rows
-
-	// 2) create a 2d array
-	
-	// 3) parse contents of the file
-	
-	int* numCols = new int;
-	char* str = readFile("data.sor", numCols);
-	printf("numCols: %d\nstr: %s\n", *numCols, str);
-
-	delete[] str;
-	delete numCols;
-	return 0;
-}
-*/
