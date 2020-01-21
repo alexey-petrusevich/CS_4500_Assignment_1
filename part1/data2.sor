@@ -1,4 +1,3 @@
-#include <iostream>
 #include "sorer.h"
 
 int main(int argc, char** argv) {
@@ -11,12 +10,8 @@ int main(int argc, char** argv) {
 	
 	// 3) parse contents of the file
 	
-	char* str = readFile("data.sor", 0, 100);
+	char* str = readFile("data.sor", 12, 54);
 	printf("str: %s\n", str);
-
-	size_t cols = getNumCols(str);
-	
-	printf("numCols: %zu\n", cols);
 
 	delete[] str;
 	return 0;

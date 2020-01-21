@@ -9,6 +9,7 @@
 // reads a file from the file name and returns a pointer to a c-string
 char* readFile(const char* filename, size_t from, size_t to) {
 	assert(filename != nullptr);
+	assert(from < to);
 
 	FILE* fp = fopen(filename, "r");
 
@@ -21,31 +22,32 @@ char* readFile(const char* filename, size_t from, size_t to) {
 	fseek(fp, 0, SEEK_END);
 	// get the size of the file
 	size_t fileSize = static_cast<size_t>(ftell(fp));
+
+	if (to > fileSize - 1) {
+		to = fileSize;
+	}
+
+
 	// move the file pointer back
 	rewind(fp);
 
 	long begin = 0;
 	if (from > 0) {
 		// loop through the file until the end of file or new line
-		for (int c = fgetc(fp); c != EOF; fseek(fp, 1L, SEEK_CUR)) {
-			printf("begin\n");
+		for (int c = fgetc(fp); begin < static_cast<long>(from); fseek(fp, 1L, SEEK_CUR)) {
 			if (c == '\n') {
 				// tells the position of the file pointer
 				begin = ftell(fp) + 1;
 				break;
 			}
+			begin++;
 		}
 	}
 	long end = fileSize;
 	if (to < fileSize) {
 		fseek(fp, to, SEEK_SET);
 		long readPos = ftell(fp);
-		printf("begin: %ld\n", begin);
-		printf("read pos: %ld\n", readPos);
-		printf("to: %zu\n", to);
 		for (int c = fgetc(fp); readPos > begin; fseek(fp, -1L, SEEK_CUR)) {
-			//printf("fp: %ld\n", ftell(fp));
-			//printf("end\n");
 			if (c == '\n') {
 				end = ftell(fp);
 				break;
@@ -68,34 +70,19 @@ char* readFile(const char* filename, size_t from, size_t to) {
 
 	// the result string
 	char* str = new char[bufferSize];
-	//while(fscanf(fp, "%s", buffer) != EOF) {
 	while (ftell(fp) < to) {
-	//while(fgets(buffer, bufferSize, fp) != NULL) {
 		// read a chunk of file to the buffer
 		fgets(buffer, bufferSize, fp);
 		// increment the memory added
 		size_t bytesRead = strlen(buffer);
 		memoryAdded += bytesRead;
 
-		
 		if (memoryLeftToRead < bufferSize) {
 			// adjust the memory in the buffer
-			memset(buffer + memoryLeftToRead, 0, bufferSize - memoryLeftToRead);
-			//buffer[bufferSize + memoryLeftToRead - 1] = '\0';
+			memset(buffer + memoryLeftToRead - 1, 0, bufferSize - memoryLeftToRead);
 		}
 		
-
 		memoryLeftToRead -= bytesRead;
-
-		
-
-		/*
-		char* temp = new char[strlen(buffer) - 1];
-		strncpy(temp, buffer, strlen(buffer) - 1);
-		memset(buffer, 0, bufferSize);
-		strcpy(buffer, temp);
-		delete[] temp;
-		*/
 
 		// check if need more memory
 		if (memoryAdded >= bufferSize) {	
@@ -123,9 +110,83 @@ char* readFile(const char* filename, size_t from, size_t to) {
 }
 
 
-size_t getNumCols(const char* str) {
-	
-	return 0;
+size_t getNumCols(char* str) {
+
+	size_t numCols = 0;
+
+	size_t length = sizeof(str);
+	for (size_t i = 0; i < length; i++) {
+		char c = str[i];
+		size_t numElements = 0;
+		bool open = false;
+		while(c != '\n') {
+			// flag for the open bracket
+			
+			// skip any spaces between the brackets
+			if (c == ' ') {
+				c = str[++i];
+			}
+
+			if (c == '<') {
+				c = str[++i];
+				open = true;
+				bool qFlag = false;
+
+				// skip preceeding spaces
+				// TODO write helper to skip spaces
+				if (c == ' ') {
+					c = str[++i];
+				}
+
+				// skip anything within quotes
+				if (c == '"') {
+					qFlag = true;
+					c = str[++i];
+					while (c != '"' && i < length) {
+						c = str[++i];
+					}
+					qFlag = false;
+				} else {
+					while (c != '>') {
+						c = str[++i];
+					}
+				}
+
+				/*
+				// skip any other characters
+				while(c != ' ' && c != '>') {
+					c = str[++i];
+				}
+				*/
+			
+				// skip trailing spaces
+				// TODO write helper to skip spaces
+				if (c == ' ') {
+					c = str[++i];
+				}
+				
+				// check for the closing bracket
+				if (c == '>') {	
+					numElements++;
+					open = false;
+					c = str[++i];
+				} else {
+					printf("malformed, c = %c\nprevious: %c\n", c, str[i - 3]);
+					// else malformed
+					exit(1);
+				}
+
+			}
+		}
+		// check if the number of elements on this row is greater tha numCols
+		if (numElements > numCols) {
+			numCols = numElements;
+		}
+		numElements = 0;
+	}
+
+	printf("numCols in get: %zu\n", numCols);
+	return numCols;
 }
 
 // populates the given array using values from string str
