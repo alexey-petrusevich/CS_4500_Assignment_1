@@ -10,9 +10,8 @@ int main(int argc, char** argv) {
 	
 	// 3) parse contents of the file
 	
-	int* numCols = new int;
-	char* str = readFile("data.sor", numCols);
-	printf("str: %s\nnumCols: %d\n", str, *numCols);
+	char* str = readFile("data.sor", 0, 5);
+	printf("str: %s\n", str);
 
 	delete[] str;
 	return 0;
