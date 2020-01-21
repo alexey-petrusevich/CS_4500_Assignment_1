@@ -11,10 +11,8 @@
 // while reading a file
 // returns a pointer to the array of c-string pointers
 // containing rows from the file
-char* readFile(const char* filename, int* numCols) {
+char* readFile(const char* filename) {
 	assert(filename != nullptr);
-
-	*numCols = 0;
 
 	FILE* fp = fopen(filename, "r");
 	size_t bufferSize = 255;
@@ -54,6 +52,59 @@ char* readFile(const char* filename, int* numCols) {
 	return str;
 }
 
+
+size_t getNumCols(const char* str) {
+	
+	return 0;
+}
+
+// populates the given array using values from string str
+void populateArray(char** array, char* str, size_t numCols) {
+
+}
+
+
+// filters the array to have the same datatype per column
+void filterArray(char** array, size_t numCols) {
+	size_t counter = 0;
+	...
+	counter++;
+
+}
+
+
+// returns true if str is boolean and false otherwise
+bool isBool(const char* str) {
+	
+}
+
+bool isString(const char* str) {
+	
+}
+
+bool isFloat(const char* str) {
+	
+}
+
+
+bool isInteger(const char* str) {
+	
+}
+
+// prints the type of the given column
+void printColType(size_t col) {
+	
+}
+
+// prints the value of the entry at the given col and row index
+void printColIndex(size_t colIndex, size_t rowIndex) {
+	
+}
+
+// prints if the given entry is missing a value
+void isMissingIndex(size_t colIndex, size_t rowIndex) {
+	
+}
 
 
 
