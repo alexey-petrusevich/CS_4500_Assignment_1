@@ -266,7 +266,7 @@ size_t longestLine(char* str) {
 
 
 // returns the number of rows in a string
-size_t numRows(char* str) {
+size_t getNumRows(char* str) {
 	assert(str != nullptr);
 	size_t numRows = 0;
 	size_t i = 0;
@@ -336,7 +336,6 @@ size_t getNumCols(char* str) {
 					// else malformed
 					exit(1);
 				}
-
 			}
 		}
 		// check if the number of elements on this row is greater tha numCols
@@ -345,8 +344,6 @@ size_t getNumCols(char* str) {
 		}
 		numElements = 0;
 	}
-
-	printf("numCols in get: %zu\n", numCols);
 	return numCols;
 }
 
@@ -532,22 +529,53 @@ bool isEmpty(const char* str) {
 	return false;
 }
 
+//helper function that gets the array of values in the specific column 
+char** getCol(char*** arr, size_t colNum) {
+}
 
-// TODO Alex
 // prints the type of the given column
-void printColType(size_t col) {
-	
+void printColType(char*** arr, size_t col) {
+	char** col = getCol(arr, col);
+
+	for(int i = 0; i < getNumRows(col); i++) {
+		if(isEmpty(col[i])) {
+			//do nothing
+		}
+		else if(isBool(col[i])) {
+			printf("Type: Boolean\n");
+			//updates the value of i to exit loop
+			i = getNumRows(col);
+		}
+		else if(isInt(col[i])) {
+			printf("Type: Integer\n");
+			//updates the value of i to exit loop
+			i = getNumRows(col);
+		}
+		else if(isFloat(col[i])) {
+			printf("Type: Float\n")
+			//updates the value of i to exit loop
+			i = getNumRows(col);
+		}
+		else if(isString(col[i])) {
+			printf("Type: String\n")
+			//updates the value of i to exit loop
+			i = getNumRows(col);
+		}
+	}
+
 }
 
-// TODO Alex
 // prints the value of the entry at the given col and row index
-void printColIndex(size_t colIndex, size_t rowIndex) {
-	
+void printColIndex(char** arr, size_t colIndex, size_t rowIndex) {
+	printf(arr[0][colIndex][rowIndex]);
+	printf("\n");
 }
 
-// TODO Alex
 // prints if the given entry is missing a value
 void isMissingIndex(size_t colIndex, size_t rowIndex) {
+	if(isEmpty(arr[0][colIndex][rowIndex])) {
+		printf("Missing a value\n");
+	}
 	
 }
 
