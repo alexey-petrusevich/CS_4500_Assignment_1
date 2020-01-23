@@ -387,29 +387,71 @@ void filterArray(char** array, size_t numCols) {
 	*/
 }
 
-// TODO Megha
+
 // returns true if str is boolean and false otherwise
 bool isBool(const char* str) {
-	return true;	
+	if (strcmp(str, "0")|| strcmp(str, "1")) {
+		return true;
+	}
+	return false;
 }
 
-// TODO Megha
-bool isString(const char* str) {
-	
-	return true;	
-}
-
-// TODO Megha
-bool isFloat(const char* str) {
-	
-	return true;	
-}
-
-
-// TODO Megha
+// returns true if str is integer and false otherwise
 bool isInteger(const char* str) {
-	
-	return true;	
+	// finds and stores the length of the str 
+	size_t length = sizeof(str);
+
+	// to check if the first item in the str is a + or - to represent the integer
+	int plusOrMinus = static_cast<int>(str[0]);
+	//compares against ASCII values
+	if(plusOrMinus == 043 || plusOrMinus == 045) {
+		// do nothing 
+	}
+
+	for(int i = 1; i< length; i++) {
+		int intConverted = static_cast<int>(str[i]);
+		if(isdigit(intConverted) == 0) { return false;}
+	}	
+	return true;
+}
+
+// returns true if str is float and false otherwise
+bool isFloat(const char* str) {
+	// finds and stores the length of the str 
+	size_t length = sizeof(str);
+	//counter to check how many times the point occurs in float
+	int periodCounter = 0;
+
+	// to check if the first item in the str is a + or - to represent the integer/float
+	int plusOrMinus = static_cast<int>(str[0]);
+	//compares against ASCII values
+	if(plusOrMinus == 043 || plusOrMinus == 045) {
+		// do nothing 
+	}
+
+	for(int i = 1; i< length; i++) {
+		int intConverted = static_cast<int>(str[i]);
+		//if more than one period occurs, it is not a valid float value
+		if(periodCounter > 1) {
+			return false;
+		}
+		//compares against ASCII value
+		if(intConverted == 046) {
+			periodCounter++;
+		}
+		if(isdigit(intConverted) == 0) { return false;}
+	}	
+	return true;
+}
+
+// returns true if str is string and false otherwise
+bool isString(const char* str) {
+	if((isBool(str)!= 1) && 
+	   (isFloat(str)!= 1) &&
+	   (isInteger(str))!= 1) {
+			return true;
+		}
+	return false;	
 }
 
 // TODO Alex
