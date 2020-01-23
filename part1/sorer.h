@@ -219,20 +219,15 @@ char** generateArray(char* str) {
 	// get the pointer to the next row
 	char* nextRowPtr = getRowPtr(str);
 
-
-	for (size_t colIndex = 0; colIndex < numCols; colIndex++) {
-		// create new column as big as the number of rows
+	for (size_t rowIndex = 0; rowIndex < numRows; rowIndex++) {
 		cols[colIndex] = new char[numRows];
-		for (size_t rowIndex = 0; rowIndex < numRows; rowIndex++) {
+		size_t rowIndex = 0;
+		for (; rowIndex < numRows; rowIndex++) {
 			// copy row and get all the entries in that row
-			// TODO create hasNextEntryMethod
+			// TODO create hasNextEntry helper
 			// TODO complete implementation
 		}
 	}
-
-	// read each line until the end of the file
-		
-
 
 	return cols;
 }
@@ -287,6 +282,8 @@ size_t numRows(char* str) {
 // returns a copy of the next entry
 // removes angle brackets
 // caller is responsible for freeing the memory
+// parameter is a string containing all the entries 
+// from the file including brackets
 char* getNextEntry(char* str) {
 	size_t entryLength = 0; // length of the entry to be created
 	size_t beginValidIndex = 0; // holds
@@ -404,7 +401,7 @@ bool isInteger(const char* str) {
 	// to check if the first item in the str is a + or - to represent the integer
 	int plusOrMinus = static_cast<int>(str[0]);
 	//compares against ASCII values
-	if(plusOrMinus == 043 || plusOrMinus == 045) {
+	if(plusOrMinus == 43 || plusOrMinus == 45) {
 		// do nothing 
 	}
 
@@ -425,7 +422,7 @@ bool isFloat(const char* str) {
 	// to check if the first item in the str is a + or - to represent the integer/float
 	int plusOrMinus = static_cast<int>(str[0]);
 	//compares against ASCII values
-	if(plusOrMinus == 043 || plusOrMinus == 045) {
+	if(plusOrMinus == 43 || plusOrMinus == 45) {
 		// do nothing 
 	}
 
@@ -436,7 +433,7 @@ bool isFloat(const char* str) {
 			return false;
 		}
 		//compares against ASCII value
-		if(intConverted == 046) {
+		if(intConverted == 46) {
 			periodCounter++;
 		}
 		if(isdigit(intConverted) == 0) { return false;}
@@ -453,6 +450,7 @@ bool isString(const char* str) {
 		}
 	return false;	
 }
+
 
 // TODO Alex
 // prints the type of the given column
