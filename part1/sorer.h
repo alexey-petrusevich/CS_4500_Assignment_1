@@ -279,6 +279,87 @@ size_t numRows(char* str) {
 	return numRows;
 }
 
+// TODO Megha
+size_t getNumCols(char* str) {
+
+	size_t numCols = 0;
+
+	size_t length = sizeof(str);
+	for (size_t i = 0; i < length; i++) {
+		char c = str[i];
+		size_t numElements = 0;
+		bool open = false;
+		while(c != '\n') {
+			// flag for the open bracket
+			
+			// skip any spaces between the brackets
+			if (c == ' ') {
+				c = str[++i];
+			}
+
+			if (c == '<') {
+				c = str[++i];
+				open = true;
+				bool qFlag = false;
+
+				// skip preceeding spaces
+				// TODO write helper to skip spaces
+				if (c == ' ') {
+					c = str[++i];
+				}
+
+				// skip anything within quotes
+				if (c == '"') {
+					qFlag = true;
+					c = str[++i];
+					while (c != '"' && i < length) {
+						c = str[++i];
+					}
+					qFlag = false;
+				} else {
+					while (c != '>') {
+						c = str[++i];
+					}
+				}
+
+				/*
+				// skip any other characters
+				while(c != ' ' && c != '>') {
+					c = str[++i];
+				}
+				*/
+			
+				// skip trailing spaces
+				// TODO write helper to skip spaces
+				if (c == ' ') {
+					c = str[++i];
+				}
+				
+				// check for the closing bracket
+				if (c == '>') {	
+					numElements++;
+					open = false;
+					c = str[++i];
+				} else {
+					printf("malformed, c = %c\nprevious: %c\n", c, str[i - 3]);
+					// else malformed
+					exit(1);
+				}
+
+			}
+		}
+		// check if the number of elements on this row is greater tha numCols
+		if (numElements > numCols) {
+			numCols = numElements;
+		}
+		numElements = 0;
+	}
+
+	printf("numCols in get: %zu\n", numCols);
+	return numCols;
+}
+
+
 // returns a copy of the next entry
 // removes angle brackets
 // caller is responsible for freeing the memory
@@ -449,6 +530,14 @@ bool isString(const char* str) {
 			return true;
 		}
 	return false;	
+}
+
+// returns true if the str is empty ( <> )
+bool isEmpty(const char* str) {
+	if(strlen(str) == 0) {
+		return true;
+	}
+	return false;
 }
 
 
