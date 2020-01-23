@@ -169,7 +169,7 @@ char* readFileHelper(FILE* fp, long beginIndex, long endIndex) {
 char* readFile(const char* filename, size_t from, size_t to) {
 	assert(filename != nullptr);
 	// check if begin index is greater or equal than end idnex
-	if (beginIndex >= endIndex) {
+	if (from >= to) {
 		fprintf(stderr, "Error: begin index must be less than end index.\n");
 		exit(1);
 	}
@@ -291,7 +291,6 @@ size_t getNumCols(char* str) {
 		bool open = false;
 		while(c != '\n') {
 			// flag for the open bracket
-			
 			// skip any spaces between the brackets
 			if (c == ' ') {
 				c = str[++i];
@@ -321,13 +320,6 @@ size_t getNumCols(char* str) {
 						c = str[++i];
 					}
 				}
-
-				/*
-				// skip any other characters
-				while(c != ' ' && c != '>') {
-					c = str[++i];
-				}
-				*/
 			
 				// skip trailing spaces
 				// TODO write helper to skip spaces
@@ -341,7 +333,6 @@ size_t getNumCols(char* str) {
 					open = false;
 					c = str[++i];
 				} else {
-					printf("malformed, c = %c\nprevious: %c\n", c, str[i - 3]);
 					// else malformed
 					exit(1);
 				}
@@ -359,6 +350,20 @@ size_t getNumCols(char* str) {
 	return numCols;
 }
 
+// a helper function for getNext entry that returns a pointer to the next
+// entry in the given string
+char* nextEntryPtr(char* str) {
+	assert(str != nullptr);
+	size_t i = 0;
+	while (str != '\0') {
+		if (str[i] == '<') {
+			return str + i;
+		}
+		i++;
+	}
+	// return nullptr if no more entries found
+	return nullptr;
+}
 
 // returns a copy of the next entry
 // removes angle brackets
@@ -379,9 +384,9 @@ char* getNextEntry(char* str) {
 	// skip any preceeding spaces
 	skipSpaces(nextEntryPtr, &beginValidIndex);
 	// check validity of the middle
-	if (isValid(nextEntryPtr, &lastValidIndex)) {
+	if (isValidEntry(nextEntryPtr, &endValidIndex)) {
 		// create a copy of the valid string and return
-		char* result = new char[lastValidIndex - beginValidIndex];
+		char* result = new char[endValidIndex - beginValidIndex];
 		return result;
 	} else {
 		return "";
@@ -439,20 +444,7 @@ bool isValidEntry(char* str, size_t* endValidIndex) {
 }
 
 
-// a helper function for getNext entry that returns a pointer to the next
-// entry in the given string
-char* nextEntryPtr(char* str) {
-	assert(str != nullptr);
-	size_t i = 0;
-	while (str != '\0') {
-		if (str[i] == '<') {
-			return str + i;
-		}
-		i++;
-	}
-	// return nullptr if no more entries found
-	return nullptr;
-}
+
 
 
 // TODO Alex
