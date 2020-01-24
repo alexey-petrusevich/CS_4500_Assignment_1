@@ -1,4 +1,4 @@
-Object class is implemented by both String and Array 
+Object class is implemented by Array 
 
 We created a few different example functions that could be utilized within our class 
 We started off with this list and eventually kept adding as we saw fit 
