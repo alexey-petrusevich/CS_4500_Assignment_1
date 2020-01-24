@@ -1,5 +1,4 @@
 sorer.h 
-
     This file is where all our main helper code is running. This file is where we:
 1) Read the file, parse through it, convert it to a usable string on which we will perform more activities (readFile and its helper functions)
 2) Once the file has been converted to a string, we are calculating the number of columsn (longest line in the file) and number of rows ( the number of lines in the file)
@@ -11,7 +10,8 @@ sorer.h
 -----
 
 data.sor
-    This is the main file we are using to parse through, store into an array and filter through the array. It contains several different examples of "bad data" and good data to parse through and store.
+    This is the main file we are using to parse through, store into an array and filter through the array. It contains several 
+    different examples of "bad data" and good data to parse through and store.
 
 -----
 
