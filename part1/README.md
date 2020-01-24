@@ -1,4 +1,4 @@
-sorer.h 
+sorer.h ->
     This file is where all our main helper code is running. This file is where we:
 1) Read the file, parse through it, convert it to a usable string on which we will perform more activities (readFile and its helper functions)
 2) Once the file has been converted to a string, we are calculating the number of columsn (longest line in the file) and number of rows ( the number of lines in the file)
@@ -9,27 +9,27 @@ sorer.h
 
 -----
 
-data.sor
+data.sor ->
     This is the main file we are using to parse through, store into an array and filter through the array. It contains several 
     different examples of "bad data" and good data to parse through and store.
 
 -----
 
-main.cpp
+main.cpp ->
     Main file that calls all the required helper code that is stored within sorer.h
     Runs the program 
 
 ------
 
-Makefile
+Makefile ->
     Containing a set of directives used by a make build automation tool to generate a target/goal
 
 -----
 
-REPO.md 
+REPO.md  ->
     Contains the link to our Github repo on which we both have been working on 
 
 -----
-test.cpp
+test.cpp ->
     A few different tests to help catch errors and ensure our code is running the way we want it to 
     
