@@ -8,16 +8,11 @@
 /**
  * @file string.h
  * @brief Implementation of String class.
- * @author Aliaksei Petrusevich
- * @date January 15, 2020
+ * @author Aliaksei Petrusevich and Megha Rao
  */
 
 /**
  * Represents sequence of characters.
- *
- * 
- * @author Aliaksei Petrusevich
- * @date January 15, 2020
  */
 class String : public Object {
 	public:
