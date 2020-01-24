@@ -268,72 +268,40 @@ size_t getNumRows(char* str) {
  * @return - the number of columns 
  */ 
 size_t getNumCols(char* str) {
+size_t numCols = 0;
 
-	size_t numCols = 0;
+	size_t length = strlen(str);
 
-	size_t length = sizeof(str);
-	for (size_t i = 0; i < length; i++) {
-		char c = str[i];
-		size_t numElements = 0;
-		bool open = false;
-		while(c != '\n') {
-			// flag for the open bracket
-			
-			// skip any spaces between the brackets
-			if (c == ' ') {
-				c = str[++i];
+	// circle through every row
+	size_t i = 0;
+
+	// read every character until the end of the string
+	while (str[i] != '\0') {
+		size_t numElements = 0; // number of elements on the given row
+		bool qFlag = false; 
+		bool openFlag = false; // flag to hold the opening brace
+		// read everything on the line
+		while (str[i] != '\n' && str[i] != '\0') {
+			if (str[i] == '<' && !openFlag && !qFlag) {
+				openFlag = true;
+			} else if (str[i] == '>' && openFlag && !qFlag) {
+				openFlag = false;
+				numElements++;
+			} else if (str[i] == '"' && !qFlag && openFlag) {
+				qFlag = true;
+			} else if (str[i] == '"' && qFlag && openFlag) {
+				qFlag = false;
 			}
-
-			if (c == '<') {
-				c = str[++i];
-				open = true;
-				bool qFlag = false;
-
-				// skip preceeding spaces
-				if (c == ' ') {
-					c = str[++i];
-				}
-
-				// skip anything within quotes
-				if (c == '"') {
-					qFlag = true;
-					c = str[++i];
-					while (c != '"' && i < length) {
-						c = str[++i];
-					}
-					qFlag = false;
-				} else {
-					while (c != '>') {
-						c = str[++i];
-					}
-				}
-			
-				// skip trailing spaces
-				if (c == ' ') {
-					c = str[++i];
-				}
-				
-				// check for the closing bracket
-				if (c == '>') {	
-					numElements++;
-					open = false;
-					c = str[++i];
-				} else {
-					printf("malformed, c = %c\nprevious: %c\n", c, str[i - 3]);
-					// else malformed
-					exit(1);
-				}
-
-			}
+			i++;
 		}
-		// check if the number of elements on this row is greater tha numCols
+		// check if the number of elements on this row is the maxium numElements
 		if (numElements > numCols) {
 			numCols = numElements;
 		}
+		// reset number of elements on the row
 		numElements = 0;
+		i++;
 	}
-
-	printf("numCols in get: %zu\n", numCols);
 	return numCols;
 }
 
@@ -347,7 +315,7 @@ size_t getNumCols(char* str) {
  */
 char* nextEntryPtr(char* str, size_t* currentReadPosition) {
 	assert(str != nullptr);
-	size_t i = 0;
+	size_t i = *currentReadPosition;
 	while (str[i] != '\0') {
 		// if encountered line break, reached end of the line
 		if (str[i] == '\n') {
@@ -357,7 +325,7 @@ char* nextEntryPtr(char* str, size_t* currentReadPosition) {
 			return str + i;
 		}
 		// increment the position the file is being read from
-		currentReadPosition++;
+		*(currentReadPosition) = *(currentReadPosition) + 1;
 		i++;
 	}
 	// return nullptr at the end of file
@@ -380,41 +348,46 @@ bool isValidEntry(char* str, size_t* endValidIndex, size_t* currentReadPtr) {
 	assert(str != nullptr);
 	assert(endValidIndex != nullptr);
 	assert(currentReadPtr != nullptr);
-	*endValidIndex = 0;
-	bool result = false;
+	printf("str in valid: %s\n", str);
+	bool result = true;
 	bool readingCharacter = true;
 	bool qFlag = false; // flag for determining the end of quotes if any
 	size_t i = 0;
+	// empty string
+	if (str[0] == '>') {
+		return false;
+	}
 	// loop until the end of the entry
 	while(str[i] != '>' && !qFlag) {
 		if (str[i] == '\0') {
 			// end of file, malformed
-			*(currentReadPtr) += i;
+			//*(currentReadPtr) += i;
 			return false;
 		}
 		// read a character
 		if (str[i] != ' ') {
 			if (str[0] == '"' && !qFlag) {
 				// character within quotes
-				*(endValidIndex)++;
+				*(endValidIndex) = *(endValidIndex) + 1;
 			} else if (!readingCharacter) {
 				// finished reading a character and read a space and read another character, then malfored
 				result = false;
-			} else if (!qFlag) {
+			} else if (qFlag) {
 				// character after closing quote
 				result = false;
 			} else {
 				// else regular character
-				*(endValidIndex)++;
+				printf("char: %c\tendIndex: %zu\n", str[i], *endValidIndex);
+				*(endValidIndex) = *(endValidIndex) + 1;
 			}
 		} 
 		// read a space
 		else if (str[i] == ' ' && readingCharacter) { // case 3: characters with spaces
-			*(endValidIndex)--; // last valid index is the previous character
+			*(endValidIndex) = *(endValidIndex) - 1; // last valid index is the previous character
 			readingCharacter = false;
 		} else if (str[i] == ' ' && str[0] == '"' && !qFlag) {
 			// space within quotes
-			*(endValidIndex)++;
+			*(endValidIndex) = *(endValidIndex) + 1;
 		} else if (str[0] == '"' && str[i] == '"') {
 			qFlag = true; // reached end of quotes
 			*(endValidIndex) = i;
@@ -423,6 +396,16 @@ bool isValidEntry(char* str, size_t* endValidIndex, size_t* currentReadPtr) {
 		i++;
 	}
 	*(currentReadPtr) += i;
+	/*
+	printf("currentReadPTr: %zu\n", *currentReadPtr);
+	printf("at index - 1: %c\n", str[*endValidIndex - 1]);
+	printf("at index - 2: %c\n", str[*endValidIndex - 2]);
+	*/
+	if (str[*endValidIndex - 1] == '>') {
+		*(endValidIndex) = *(endValidIndex) - 1;
+	}
+	
+	printf("endValidIndex: %zu\n", *endValidIndex);
 	return result;
 }
 
@@ -435,8 +418,13 @@ bool isValidEntry(char* str, size_t* endValidIndex, size_t* currentReadPtr) {
 void skipSpaces(char* str, size_t* i) {
 	assert(str != nullptr);
 	assert(i != nullptr);
-	while(str[*i] == ' ') {
-		(*i)++;
+	size_t count = 0;
+	printf("i in skipspaces: %zu\n", *i);
+	printf("str in space: %s\n", str);
+	while(str[count] == ' ') {
+		printf("space skipped\n");
+		*(i) = *(i) + 1;
+		count++;
 	}
 }
 
@@ -452,36 +440,52 @@ void skipSpaces(char* str, size_t* i) {
  * @return - a string 
  */
 char* getNextEntry(char* str, size_t* currentReadPosition) {
-	size_t beginValidIndex = *(currentReadPosition); // holds
+	printf("current read pos: %zu\n", *currentReadPosition);
 	// get the pointer to the beginning of the next set of characters
 	char* nextEntry = nextEntryPtr(str, currentReadPosition); // increments currentRead position
 	// if nextEntryPtr is nullptr, there are no more entries to read; end of row or EOF
 	if (nextEntry == nullptr) {
 		return nullptr;
+	} else {
+		printf("nextEntry: %s\n", nextEntry);
 	}
 	// holds the end index of a valid entry
-	size_t endValidIndex = 0;
-	// skip any preceeding spaces
-	skipSpaces(nextEntry, &beginValidIndex);
+	size_t beginValidIndex = 1; // holds
+	size_t endValidIndex = 1;
+	// skip any spaces following < 
+	skipSpaces(nextEntry + 1, &beginValidIndex);
 	// increment read position
-	*(currentReadPosition) = beginValidIndex;
+	*(currentReadPosition) += beginValidIndex;
+	endValidIndex = beginValidIndex;
+
+	printf("beginValidIndex: %zu\n", beginValidIndex);
+	printf("following curr index: %zu\n", *currentReadPosition);
 	// check validity of the middle
 	// endValidIndex is incremented here
-	if (isValidEntry(nextEntry, &endValidIndex, currentReadPosition)) {
+	char* result;
+	if (isValidEntry(nextEntry + beginValidIndex, &endValidIndex, currentReadPosition)) {
 		// check if begin entry is a quote mark
 		if (str[beginValidIndex] == '"') {
 			beginValidIndex++;
 			endValidIndex--;
 		}
 		// create a copy of the valid string and return
-		size_t length = endValidIndex - beginValidIndex;
-		char* result = new char[length + 1];
-		strncpy(result, str + static_cast<int>(*(currentReadPosition)), length);
+		size_t length = endValidIndex - beginValidIndex + 1;
+		printf("length: %zu\n", length);
+		result = new char[length + 1];
+		char* endPos = nextEntry + beginValidIndex;
+		strncpy(result, endPos, length);
+		result[length] = '\0';
+		printf("result after copy: %s\n", result);
 		return result;
 	} else {
 		// empty string
-		return new char[1];
+		printf("invalid entry\n");
+		result = new char[1];
+		result[0] = '\0';
 	}
+	*(currentReadPosition) = *(currentReadPosition) + 1;
+	return result;
 }
 
 /**
@@ -492,7 +496,6 @@ char* getNextEntry(char* str, size_t* currentReadPosition) {
  */
 char*** generateArray(char* str) {
 	assert(str != nullptr);
-
 	// get the number of columns and rows
 	// numCols is the maximum number of columns
 	size_t numCols = getNumCols(str);
@@ -519,6 +522,7 @@ char*** generateArray(char* str) {
 			// and returns a new substring
 			// new entry is without brackets and preceeding/trailing spaces
 			char* newEntry = getNextEntry(str, &currentStrPtr);
+			printf("new entry: %s\n", newEntry);
 		
 			// if newEntry is null, there are no more entries in that row
 			if (newEntry == nullptr) {
@@ -709,6 +713,8 @@ void filterColumn(char** column, size_t numRows, bool (*predicate)(const char*))
  * @param numRows - the number of rows
  */
 void filterArray(char*** array, size_t numCols, size_t numRows) {
+	printf("numCols: %zu\nnumRows: %zu\n", numCols, numRows);
+	printf("filtering array\n");
 	for (size_t colIndex = 0; colIndex < numCols; colIndex++) {
 		size_t intCount = 0;
 		size_t floatCount = 0;
@@ -753,6 +759,7 @@ void filterArray(char*** array, size_t numCols, size_t numRows) {
 		} 
 		
 	}
+	printf("filtered\n");
 }
 
 /**
@@ -763,9 +770,14 @@ void filterArray(char*** array, size_t numCols, size_t numRows) {
  * @param numRows - the number of rows 
  */
 void printColType(char*** array, size_t colIndex, size_t numRows) {
+	assert(array != nullptr);
 	size_t rowIndex = 0;
-	while (isEmpty(array[colIndex][rowIndex]) && rowIndex < numRows) {
+	while (rowIndex < numRows && isEmpty(array[colIndex][rowIndex])) {
 		rowIndex++;
+	}
+	// happen if all entries are empty
+	if (rowIndex == numRows) {
+		rowIndex--;
 	}
 	char* entry = array[colIndex][rowIndex];
 	if (isBool(entry)) {
