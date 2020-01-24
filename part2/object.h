@@ -6,15 +6,11 @@
 /**
  * @file object.h
  * @brief Implementation of Object class.
- * @author Aliaksei Petrusevich
- * @date January 15, 2020
+ * @author Aliaksei Petrusevich and Megha Rao
  */
 
 /**
  * A base object class that represents the root of the class hierarchy.
- *
- * @author Aliaksei Petrusevich
- * @date January 15, 2020
  */
 class Object {
 	public:
